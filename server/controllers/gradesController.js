@@ -5,7 +5,7 @@ const GradeController = {};
 
 GradeController.getGradesByStudent = (req, res) => {
   const query = {
-    text: 'SELECT * FROM Grades WHERE student = $1',
+    text: 'SELECT s.firstname as student_first_name, s.lastname as student_last_name, gi.name as assignment_name, g.actualscore as actual_score, gi.possiblescore as possible_score FROM Grades g INNER JOIN Students s ON g.student = s._id INNER JOIN Graded_Items gi ON g.item = gi._id WHERE student = $1',
     values: [req.params.studentId]
   };
 
