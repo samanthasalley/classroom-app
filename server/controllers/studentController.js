@@ -1,27 +1,30 @@
-const Student = require('../models').Student;
+const Student   = require('../models/student.js'),
+      db        = require('../models/database');
 
 const StudentController = {};
 
 StudentController.getAllStudents = (req, res) => {
-  console.log('getting all students');
+  db.getAll('Students')
+    .then(students => res.status(200).send(students))
+    .catch(err => res.status(404).send(err));
 };
 
 StudentController.addStudent = (req, res) => {
-  console.log('adding new student');
-  let newStudent = {
+  let newStudent = new Student({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
-    dob: new Date(req.body.dob),
-    grade: Number(req.body.grade)
+    dob: req.body.dob,
+    grade: req.body.grade
+  });
+
+  const query = {
+    text: 'INSERT INTO Students(firstName, lastName, dob, grade) VALUES($1, $2, $3, $4) RETURNING _id',
+    values: Object.values(newStudent)
   };
 
-  return Student
-    .create(newStudent)
-    .then(createdStudent => res.status(201).send(createdStudent))
-    .catch(err => {
-      console.log('error creating new student', err);
-      res.status(400).send(err)
-    });
+  db.conn.one(query)
+    .then(createdStudent => res.status(201).send({'msg':'Student successfully created', 'id': createdStudent._id}))
+    .catch(err => res.status(404).send(err));
 };
 
 module.exports = StudentController;
