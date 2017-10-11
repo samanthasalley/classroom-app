@@ -1,6 +1,7 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
+import RaisedButton from 'material-ui/RaisedButton';
 
 const NewAssignmentForm = (props) => {
   return (
@@ -35,7 +36,7 @@ const NewAssignmentForm = (props) => {
         onChange={props.handleNewAssignmentInputChange}
         hintText="Possible Score"
       />
-      <input type="submit" value="Save New Assignment" />
+      <RaisedButton type="submit" label="Save New Assignment" primary={true}/>
     </form>
   );
 };

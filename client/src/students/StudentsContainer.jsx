@@ -5,8 +5,11 @@ import {
   ToolbarSeparator,
   ToolbarTitle
 } from 'material-ui/Toolbar';
+import ViewStudentsBtn from './assets/ViewStudentsBtn';
 import NewStudentBtn from './assets/NewStudentBtn';
 import StudentTable from './StudentTable';
+import StudentGradeTable from '../grades/StudentGradeTable';
+import NewGradeForm from '../grades/NewGradeForm';
 import NewStudentForm from './NewStudentForm';
 
 const resetNewStudent = () => {
@@ -18,24 +21,58 @@ const resetNewStudent = () => {
   };
 };
 
+const resetNewGrade = () => {
+  return {
+    student: '',
+    item: '',
+    actualScore: ''
+  };
+};
+
 class StudentsContainer extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
+      assignments: this.getAllAssignments(),
       students: this.getAllStudents(),
       showStudents: false,
+      showStudentGrades: false,
+      studentGradesIdx: null,
       showAddStudent: false,
       newStudent: resetNewStudent(),
-      studentGrades: [9, 10, 11, 12]
+      studentGrades: [9, 10, 11, 12],
+      showAddGrade: false,
+      newGrade: resetNewGrade()
     };
 
+    this.getAllAssignments = this.getAllAssignments.bind(this);
+
     this.getAllStudents = this.getAllStudents.bind(this);
-    this.validateNewStudent = this.validateNewStudent.bind(this);
+    this.getStudentGrades = this.getStudentGrades.bind(this);
+
     this.createStudent = this.createStudent.bind(this);
     this.addNewStudent = this.addNewStudent.bind(this);
+    this.validateNewStudent = this.validateNewStudent.bind(this);
     this.handleNewStudentDOBChange = this.handleNewStudentDOBChange.bind(this);
     this.handleNewStudentInputChange = this.handleNewStudentInputChange.bind(this);
+
+    this.addNewGrade = this.addNewGrade.bind(this);
+    this.validateNewGrade = this.validateNewGrade.bind(this);
+    this.handleNewGradeInputChange = this.handleNewGradeInputChange.bind(this);
+    this.handleNewGradeStudentChange = this.handleNewGradeStudentChange.bind(this);
+    this.handleNewGradeAssignmentChange = this.handleNewGradeAssignmentChange.bind(this);
+  }
+
+  getAllAssignments() {
+    fetch('http://localhost:8080/api/graded-items')
+      .then((response) => response.json())
+      .then(assignments => {
+        this.setState({
+          assignments: assignments
+        });
+      })
+      .catch(ex => console.log('error getting assignments', ex));
   }
 
   getAllStudents() {
@@ -44,11 +81,29 @@ class StudentsContainer extends Component {
       .then(students => {
         this.setState({
           students: students,
-          showStudentContainer: true,
           showStudents: true,
+          showStudentGrades: false,
           showAddStudent: false,
-          showAssignmentContainer: false,
-          showAssignments: false
+          showAddGrade: false
+        });
+      })
+      .catch(ex => console.log('error getting students', ex));
+  }
+
+  getStudentGrades(studentId, studentIdx) {
+    let uri = `http://localhost:8080/api/students/${studentId}/grades`;
+    fetch(uri)
+      .then((response) => response.json())
+      .then(studentGrades => {
+        let students = this.state.students.slice(0);
+        students[studentIdx].grades = studentGrades;
+        this.setState({
+          students: students,
+          showStudents: false,
+          showAddStudent: false,
+          showAddGrade: false,
+          showStudentGrades: true,
+          studentGradesIdx: studentIdx
         });
       })
       .catch(ex => console.log('error getting students', ex));
@@ -85,7 +140,8 @@ class StudentsContainer extends Component {
   addNewStudent() {
     this.setState({
       showStudents: false,
-      showAddStudent: true
+      showAddStudent: true,
+      showAddGrade: false
     });
   }
 
@@ -103,10 +159,73 @@ class StudentsContainer extends Component {
     const name = target.name;
     const newStudent = Object.assign(this.state.newStudent);
     newStudent[name] = value;
-    // console.log(`input change on ${name} - new value is ${value}`);
     this.setState({
       newStudent: newStudent
     });
+  }
+
+  createGrade() {
+    let newGrade = Object.assign(this.state.newGrade);
+    let studentId = this.state.students[this.state.studentGradesIdx]._id;
+    let uri = `http://localhost:8080/api/students/${studentId}/graded-items/${newGrade.item}`;
+    fetch(uri, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newGrade)
+    })
+      .then(response => response.json())
+      .then(createdGrade => {
+        let resetGrade = resetNewGrade();
+        setTimeout(() => this.getStudentGrades(createdGrade.student, this.state.studentGradesIdx), 0);
+        this.setState({
+          showAddGrade: false,
+          newGrade: resetGrade
+        });
+      })
+      .catch(ex => console.log('error creating new grade', ex));
+  }
+
+  validateNewGrade(ev) {
+    ev.preventDefault();
+    let newGrade = this.state.newGrade;
+    newGrade.student = this.state.students[this.state.studentGradesIdx]._id;
+    if (!newGrade.student || !newGrade.item || !newGrade.actualScore) return;
+    console.log('ready to save newGrade: ', newGrade);
+    this.createGrade();
+  }
+
+  addNewGrade(studentIdx) {
+    this.setState({
+      showStudents: false,
+      showAddStudent: false,
+      showAddGrade: true,
+      studentGradesIdx: studentIdx
+    });
+  }
+
+  handleNewGradeAssignmentChange(ev, idx, value) {
+    const newGrade = Object.assign(this.state.newGrade);
+    newGrade.item = value;
+    this.setState({
+      newGrade: newGrade
+    });
+  }
+
+  handleNewGradeInputChange(ev) {
+    const target = ev.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    const newGrade = Object.assign(this.state.newGrade);
+    newGrade[name] = value;
+    this.setState({
+      newGrade: newGrade
+    });
+  }
+
+  handleNewGradeStudentChange(ev) {
+    console.log('Cannot change student');
   }
 
   render() {
@@ -117,12 +236,29 @@ class StudentsContainer extends Component {
             <ToolbarTitle text="Student Toolbar" />
           </ToolbarGroup>
           <ToolbarGroup>
+            <ViewStudentsBtn getAllStudents={this.getAllStudents} />
             <ToolbarSeparator />
             <NewStudentBtn addNewStudent={this.addNewStudent} />
           </ToolbarGroup>
         </Toolbar>
-        {/* <StudentToolbar addNewStudent={props.addNewStudent} /> */}
-        {this.state.showStudents ? <StudentTable students={this.state.students} /> : null}
+        {this.state.showStudents ? <StudentTable
+          students={this.state.students}
+          getStudentGrades={this.getStudentGrades}
+          addNewGrade={this.addNewGrade}
+        /> : null}
+        {this.state.showStudentGrades ? <StudentGradeTable
+          student={this.state.students[this.state.studentGradesIdx]}
+          studentGrades={this.state.students[this.state.studentGradesIdx].grades}
+        /> : null}
+        {this.state.showAddGrade ? <NewGradeForm
+          newGrade={this.state.newGrade}
+          student={this.state.students[this.state.studentGradesIdx]}
+          assignments={this.state.assignments}
+          validateNewGrade={this.validateNewGrade}
+          handleNewGradeInputChange={this.handleNewGradeInputChange}
+          handleNewGradeStudentChange={this.handleNewGradeStudentChange}
+          handleNewGradeAssignmentChange={this.handleNewGradeAssignmentChange}
+        /> : null}
         {this.state.showAddStudent ? <NewStudentForm
           newStudent={this.state.newStudent}
           validateNewStudent={this.validateNewStudent}

@@ -1,6 +1,7 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
+import RaisedButton from 'material-ui/RaisedButton';
 
 const NewStudentForm = (props) => {
   return (
@@ -34,7 +35,7 @@ const NewStudentForm = (props) => {
         onChange={props.handleNewStudentInputChange}
         hintText="Grade"
       />
-      <input type="submit" value="Save New Student" />
+      <RaisedButton type="submit" label="Save New Student" primary={true}/>
     </form>
   );
 };

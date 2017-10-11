@@ -8,7 +8,8 @@ const NewAssignmentBtn = (props) => {
       className="New-Student-Btn"
       onClick={props.addNewStudent}
       label="Add New Student" primary={true}
-      icon={<FontIcon className="fa fa-plus" />}
+      labelStyle={{'fontSize':'0.8em'}}
+      icon={<FontIcon style={{'fontSize':'1em'}} className="fa fa-plus" />}
     />
   );
 };

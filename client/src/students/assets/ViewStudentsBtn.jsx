@@ -7,8 +7,9 @@ const ViewStudentsBtn = (props) => {
     <RaisedButton
       className="View-Student-Btn"
       onClick={props.getAllStudents}
-      label="View Students" default={true}
-      icon={<FontIcon className="fa fa-eye" />}
+      label="All Students" default={true}
+      labelStyle={{'fontSize':'0.8em'}}
+      icon={<FontIcon style={{'fontSize':'1em'}} className="fa fa-eye" />}
     />
   );
 };

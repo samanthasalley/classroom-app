@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import LoggedInMenu from './menus/LoggedInMenu';
+import Home from './Home';
 import StudentsContainer from './students/StudentsContainer';
 import AssignmentContainer from './assignments/AssignmentContainer';
 
@@ -22,6 +23,7 @@ class App extends Component {
                 showMenuIconButton={false}
               />
               <Switch>
+                <Route exact path="/" component={Home} />
                 <Route exact path="/students" component={StudentsContainer} />
                 <Route exact path="/assignments" component={AssignmentContainer} />
               </Switch>
