@@ -22,12 +22,12 @@ GradeController.addGrade = (req, res) => {
   });
 
   const query = {
-    text: 'INSERT INTO Grades(student, item, actualScore) VALUES($1, $2, $3) RETURNING _id',
+    text: 'INSERT INTO Grades(student, item, actualScore) VALUES($1, $2, $3) RETURNING _id, student',
     values: Object.values(newGrade)
   };
 
   db.conn.one(query)
-    .then(createdGrade => res.status(201).send({ 'msg': 'Grade successfully created', 'id': createdGrade._id }))
+    .then(createdGrade => res.status(201).send({ 'msg': 'Grade successfully created', '_id': createdGrade._id, 'student': createdGrade.student }))
     .catch(err => {
       console.log('err: ', err);
       res.status(404).send(err);
