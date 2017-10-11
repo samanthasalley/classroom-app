@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import AppBar from 'material-ui/AppBar';
 import LoggedInMenu from './menus/LoggedInMenu';
 import StudentsContainer from './students/StudentsContainer';
-import AssignmentTable from './assignments/AssignmentTable';
+import AssignmentContainer from './assignments/AssignmentContainer';
 
 const resetNewStudent = () => {
   return {
@@ -10,6 +10,15 @@ const resetNewStudent = () => {
     lastName: '',
     dob: '',
     grade: ''
+  };
+};
+
+const resetNewAssignment = () => {
+  return {
+    name: '',
+    assignedDate: {},
+    dueDate: {},
+    possibleScore: ''
   };
 };
 
@@ -25,15 +34,25 @@ class App extends Component {
       newStudent: resetNewStudent(),
       studentGrades: [9, 10, 11, 12],
       assignments: [],
-      showAssignments: false
+      showAssignmentContainer: false,
+      showAssignments: false,
+      showAddAssignment: false,
+      newAssignment: resetNewAssignment()
     };
 
     this.getAllStudents = this.getAllStudents.bind(this);
-    this.getAllAssignments = this.getAllAssignments.bind(this);
     this.validateNewStudent = this.validateNewStudent.bind(this);
     this.createStudent = this.createStudent.bind(this);
     this.addNewStudent = this.addNewStudent.bind(this);
     this.handleNewStudentInputChange = this.handleNewStudentInputChange.bind(this);
+
+    this.getAllAssignments = this.getAllAssignments.bind(this);
+    this.validateNewAssignment = this.validateNewAssignment.bind(this);
+    this.createAssignment = this.createAssignment.bind(this);
+    this.addNewAssignment = this.addNewAssignment.bind(this);
+    this.handleNewAssignmentInputChange = this.handleNewAssignmentInputChange.bind(this);
+    this.handleNewAssignmentDueDateChange = this.handleNewAssignmentDueDateChange.bind(this);
+    this.handleNewAssignmentAssignedDateChange = this.handleNewAssignmentAssignedDateChange.bind(this);
   }
 
   getAllStudents(){
@@ -90,7 +109,7 @@ class App extends Component {
     const target = ev.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
-    const newStudent = this.state.newStudent;
+    const newStudent = Object.assign(this.state.newStudent);
       newStudent[name] = value;
     // console.log(`input change on ${name} - new value is ${value}`);
     this.setState({
@@ -106,10 +125,75 @@ class App extends Component {
           assignments:assignments,
           showStudentContainer: false,
           showStudents: false,
+          showAssignmentContainer: true,
           showAssignments: true
         });
       })
       .catch(ex => console.log('error getting assignments', ex));
+  }
+
+  createAssignment(){
+    let newAssignment = Object.assign(this.state.newAssignment);
+    fetch('http://localhost:8080/api/graded-items', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newAssignment)
+    })
+    .then(response => response.json())
+    .then(createdStudent => {
+      let resetAssignment = resetNewAssignment();
+      setTimeout(this.getAllAssignments, 0);
+      this.setState({
+        showAddAssignment: false,
+        newAssignment: resetAssignment
+      });
+    })
+    .catch(ex => console.log('error creating new assignment', ex));
+  }
+
+  validateNewAssignment(ev){
+    ev.preventDefault();
+    let newAssignment = this.state.newAssignment;
+    if(!newAssignment.name || !newAssignment.assignedDate || !newAssignment.dueDate || !newAssignment.possibleScore) return;
+    this.createAssignment();
+  }
+
+  addNewAssignment(){
+    this.setState({
+      showAssignments: false,
+      showAddAssignment: true
+    });
+  }
+  
+  handleNewAssignmentInputChange(ev) {
+    const target = ev.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    const newAssignment = this.state.newAssignment;
+      newAssignment[name] = value;
+    // console.log(`input change on ${name} - new value is ${value}`);
+    this.setState({
+        newAssignment: newAssignment
+      });
+  }
+
+  handleNewAssignmentDueDateChange(ev, date) {
+    const newAssignment = Object.assign(this.state.newAssignment);
+      newAssignment.dueDate = date;
+    this.setState({
+      newAssignment: newAssignment
+    });
+  }
+
+  handleNewAssignmentAssignedDateChange(ev, date) {
+    const newAssignment = Object.assign(this.state.newAssignment);
+      newAssignment.assignedDate = date;
+    console.log('ready to update newAssignment with updated assigned date', newAssignment);
+    this.setState({
+      newAssignment: newAssignment
+    });
   }
 
   render() {
@@ -135,7 +219,17 @@ class App extends Component {
           handleNewStudentInputChange={this.handleNewStudentInputChange}
           addNewStudent={this.addNewStudent} 
           /> : null}
-        {(this.state.showAssignments && this.state.assignments.length) ? <AssignmentTable assignments={this.state.assignments}/> : null}
+        {(this.state.showAssignmentContainer) ? <AssignmentContainer 
+          assignments={this.state.assignments} 
+          showAssignments={this.state.showAssignments}
+          showAddAssignment={this.state.showAddAssignment}
+          newAssignment={this.state.newAssignment}
+          validateNewAssignment={this.validateNewAssignment}
+          handleNewAssignmentInputChange={this.handleNewAssignmentInputChange}
+          handleNewAssignmentDueDateChange={this.handleNewAssignmentDueDateChange}
+          handleNewAssignmentAssignedDateChange={this.handleNewAssignmentAssignedDateChange}
+          addNewAssignment={this.addNewAssignment} 
+          /> : null}
       </div>
     );
   }
