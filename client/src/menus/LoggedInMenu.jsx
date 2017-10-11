@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
 import MenuItem from 'material-ui/MenuItem';
@@ -16,14 +17,14 @@ const LoggedInMenu = (props) => {
       targetOrigin={{horizontal: 'right', vertical: 'top'}}
       anchorOrigin={{horizontal: 'right', vertical: 'top'}}
     >
-      <MenuItem 
-        primaryText="Students"
-        onClick={props.getAllStudents}
-      />
-      <MenuItem 
-        primaryText="Assignments"
-        onClick={props.getAllAssignments}
-      />
+    <MenuItem 
+      containerElement={<Link to="/students" />}
+      primaryText="Students"
+    />
+    <MenuItem 
+      containerElement={<Link to="/assignments" />}
+      primaryText="Assignments"
+    />
     </IconMenu>
   );
 };
