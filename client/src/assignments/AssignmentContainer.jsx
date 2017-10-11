@@ -5,6 +5,7 @@ import {
   ToolbarSeparator,
   ToolbarTitle
 } from 'material-ui/Toolbar';
+import ViewAssignmentsBtn from './assets/ViewAssignmentsBtn';
 import NewAssignmentBtn from './assets/NewAssignmentBtn';
 import AssignmentTable from './AssignmentTable';
 import NewAssignmentForm from './NewAssignmentForm';
@@ -44,10 +45,8 @@ class AssignmentContainer extends Component {
       .then(assignments => {
         this.setState({
           assignments: assignments,
-          showStudentContainer: false,
-          showStudents: false,
-          showAssignmentContainer: true,
-          showAssignments: true
+          showAssignments: true,
+          showAddAssignment: false
         });
       })
       .catch(ex => console.log('error getting assignments', ex));
@@ -125,6 +124,7 @@ class AssignmentContainer extends Component {
             <ToolbarTitle text="Assignmentss Toolbar" />
           </ToolbarGroup>
           <ToolbarGroup>
+            <ViewAssignmentsBtn getAllAssignments={this.getAllAssignments} />
             <ToolbarSeparator />
             <NewAssignmentBtn addNewAssignment={this.addNewAssignment} />
           </ToolbarGroup>
