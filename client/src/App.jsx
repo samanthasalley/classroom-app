@@ -8,7 +8,7 @@ const resetNewStudent = () => {
   return {
     firstName: '',
     lastName: '',
-    dob: '',
+    dob: {},
     grade: ''
   };
 };
@@ -44,6 +44,7 @@ class App extends Component {
     this.validateNewStudent = this.validateNewStudent.bind(this);
     this.createStudent = this.createStudent.bind(this);
     this.addNewStudent = this.addNewStudent.bind(this);
+    this.handleNewStudentDOBChange = this.handleNewStudentDOBChange.bind(this);
     this.handleNewStudentInputChange = this.handleNewStudentInputChange.bind(this);
 
     this.getAllAssignments = this.getAllAssignments.bind(this);
@@ -64,6 +65,7 @@ class App extends Component {
           showStudentContainer: true,
           showStudents: true,
           showAddStudent: false,
+          showAssignmentContainer: false,
           showAssignments: false
         });
       })
@@ -102,6 +104,14 @@ class App extends Component {
     this.setState({
       showStudents: false,
       showAddStudent: true
+    });
+  }
+
+  handleNewStudentDOBChange(ev, date) {
+    const newStudent = Object.assign(this.state.newStudent);
+      newStudent.dob = date;
+    this.setState({
+      newStudent: newStudent
     });
   }
 
@@ -216,6 +226,7 @@ class App extends Component {
           showAddStudent={this.state.showAddStudent}
           newStudent={this.state.newStudent}
           validateNewStudent={this.validateNewStudent}
+          handleNewStudentDOBChange={this.handleNewStudentDOBChange}
           handleNewStudentInputChange={this.handleNewStudentInputChange}
           addNewStudent={this.addNewStudent} 
           /> : null}

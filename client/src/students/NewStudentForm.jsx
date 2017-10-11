@@ -1,5 +1,6 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
+import DatePicker from 'material-ui/DatePicker';
 
 const NewStudentForm = (props) => {
   return (
@@ -18,12 +19,13 @@ const NewStudentForm = (props) => {
         onChange={props.handleNewStudentInputChange}
         hintText="Last Name"
       />
-      <TextField
+      <DatePicker
         name="dob"
-        type="text"
         value={props.newStudent.dob}
-        onChange={props.handleNewStudentInputChange}
+        onChange={props.handleNewStudentDOBChange}
+        locale='en-US'
         hintText="Date of Birth"
+        container="inline"
       />
       <TextField
         name="grade"
