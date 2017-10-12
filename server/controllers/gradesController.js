@@ -5,7 +5,7 @@ const GradeController = {};
 
 GradeController.getGradesByStudent = (req, res) => {
   const query = {
-    text: 'SELECT s.firstname as student_first_name, s.lastname as student_last_name, gi.name as assignment_name, g.actualscore as actual_score, gi.possiblescore as possible_score FROM Grades g INNER JOIN Students s ON g.student = s._id INNER JOIN Graded_Items gi ON g.item = gi._id WHERE student = $1',
+    text: 'SELECT g._id as grade_id, s.firstname as student_first_name, s.lastname as student_last_name, gi.name as assignment_name, g.actualscore as actual_score, gi.possiblescore as possible_score FROM Grades g INNER JOIN Students s ON g.student = s._id INNER JOIN Graded_Items gi ON g.item = gi._id WHERE student = $1',
     values: [req.params.studentId]
   };
 
@@ -17,7 +17,7 @@ GradeController.getGradesByStudent = (req, res) => {
 GradeController.addGrade = (req, res) => {
   let newGrade = new Grade({
     studentId: req.params.studentId,
-    itemId: req.params.gradedItemId,
+    itemId: req.body.item,
     actualScore: req.body.actualScore
   });
 
@@ -32,6 +32,12 @@ GradeController.addGrade = (req, res) => {
       console.log('err: ', err);
       res.status(404).send(err);
     });
+};
+
+GradeController.deleteGrade = (req, res) => {
+  db.deleteById('Grades', req.params.gradeId)
+    .then(deletedGrade => res.status(200).send({'msg': 'Grade successfully deleted', deletedGrade}))
+    .catch(err => res.status(400).send(err));
 };
 
 module.exports = GradeController;

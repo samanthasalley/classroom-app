@@ -62,6 +62,8 @@ class StudentsContainer extends Component {
     this.handleNewGradeInputChange = this.handleNewGradeInputChange.bind(this);
     this.handleNewGradeStudentChange = this.handleNewGradeStudentChange.bind(this);
     this.handleNewGradeAssignmentChange = this.handleNewGradeAssignmentChange.bind(this);
+
+    this.deleteGrade = this.deleteGrade.bind(this);
   }
 
   getAllAssignments() {
@@ -164,10 +166,18 @@ class StudentsContainer extends Component {
     });
   }
 
+  deleteGrade(studentId, gradeId) {
+    let uri = `http://localhost:8080/api/students/${studentId}/grades/${gradeId}`;
+    fetch(uri, {method: 'DELETE'})
+      .then(response => response.json())
+      .then(parsedRes => this.getStudentGrades(parsedRes.deletedGrade.student, this.state.studentGradesIdx))
+      .catch(ex => console.log('error deleting grade', ex));
+  }
+
   createGrade() {
     let newGrade = Object.assign(this.state.newGrade);
     let studentId = this.state.students[this.state.studentGradesIdx]._id;
-    let uri = `http://localhost:8080/api/students/${studentId}/graded-items/${newGrade.item}`;
+    let uri = `http://localhost:8080/api/students/${studentId}/grades`;
     fetch(uri, {
       method: 'POST',
       headers: {
@@ -247,6 +257,7 @@ class StudentsContainer extends Component {
           addNewGrade={this.addNewGrade}
         /> : null}
         {this.state.showStudentGrades ? <StudentGradeTable
+          deleteGrade={this.deleteGrade}
           student={this.state.students[this.state.studentGradesIdx]}
           studentGrades={this.state.students[this.state.studentGradesIdx].grades}
         /> : null}

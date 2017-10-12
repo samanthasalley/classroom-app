@@ -14,16 +14,21 @@ const StudentGradeTable = (props) => {
   const studentGradeTableHeaders = [];
   if (props.studentGrades.length) {
     Object.keys(props.studentGrades[0]).forEach((key, i) => {
-      if(i > 1){
+      if (i > 2) {
         studentGradeTableHeaders.push(
           <TableHeaderColumn key={i} style={{ textAlign: 'center' }}>{key.toUpperCase()}</TableHeaderColumn>
         );
       }
     });
+    studentGradeTableHeaders.push(
+      <TableHeaderColumn key={Object.keys(props.studentGrades[0]).length} style={{ textAlign: 'center' }}>{'OPTIONS'}</TableHeaderColumn>
+    );
     for (let i = 0; i < props.studentGrades.length; i++) {
       allStudentGrades.push(
         <Grade
           key={i}
+          student={props.student}
+          deleteGrade={props.deleteGrade}
           studentGrade={props.studentGrades[i]}
         />
       );
@@ -32,7 +37,7 @@ const StudentGradeTable = (props) => {
   return (
     <div>
       <header>
-        <h3 style={{'textAlign':'center'}}>Showing Grades for: {studentFullName}</h3>
+        <h3 style={{ 'textAlign': 'center' }}>Showing Grades for: {studentFullName}</h3>
       </header>
       <Table>
         <TableHeader

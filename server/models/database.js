@@ -5,6 +5,10 @@ const env     = require('dotenv').config(),
 const db = {
   getAll: (table) => {
     return db.conn.any(`SELECT * FROM ${table}`);
+  },
+
+  deleteById: (table, id) => {
+    return db.conn.one(`DELETE FROM ONLY ${table} WHERE _id = ${id} RETURNING *`);
   }
 };
 

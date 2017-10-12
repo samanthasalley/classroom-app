@@ -20,10 +20,11 @@ router
 
 router
   .route('/students/:studentId/grades')
-  .get(gradeController.getGradesByStudent);
+  .get(gradeController.getGradesByStudent)
+  .post(gradeController.addGrade);
 
 router
-  .route('/students/:studentId/graded-items/:gradedItemId')
-  .post(gradeController.addGrade);
+  .route('/students/:studentId/grades/:gradeId')
+  .delete(gradeController.deleteGrade);
 
 module.exports = router;
