@@ -19,6 +19,10 @@ router
   .post(gradedItemsController.addItem);
 
 router
+  .route('/grades')
+  .get(gradeController.getAllGrades);
+
+router
   .route('/students/:studentId/grades')
   .get(gradeController.getGradesByStudent)
   .post(gradeController.addGrade);

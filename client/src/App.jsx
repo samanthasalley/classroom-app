@@ -6,6 +6,7 @@ import LoggedInMenu from './menus/LoggedInMenu';
 import Home from './Home';
 import StudentsContainer from './students/StudentsContainer';
 import AssignmentContainer from './assignments/AssignmentContainer';
+import GradesByAssignment from './GradesByAssignment';
 
 class App extends Component {
   render() {
@@ -26,6 +27,7 @@ class App extends Component {
                 <Route exact path="/" component={Home} />
                 <Route exact path="/students" component={StudentsContainer} />
                 <Route exact path="/assignments" component={AssignmentContainer} />
+                <Route exact path="/grades-by-assignment" component={GradesByAssignment} />
               </Switch>
             </div>
           </BrowserRouter>

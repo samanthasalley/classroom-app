@@ -121,7 +121,7 @@ class AssignmentContainer extends Component {
       <div className="Assignments-Container">
         <Toolbar>
           <ToolbarGroup>
-            <ToolbarTitle text="Assignmentss Toolbar" />
+            <ToolbarTitle text="Assignments Toolbar" />
           </ToolbarGroup>
           <ToolbarGroup>
             <ViewAssignmentsBtn getAllAssignments={this.getAllAssignments} />

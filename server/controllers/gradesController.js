@@ -3,6 +3,16 @@ const Grade = require('../models/grade.js'),
 
 const GradeController = {};
 
+GradeController.getAllGrades = (req, res) => {
+  const query = {
+    text: 'SELECT g._id as grade_id, g.actualscore as actual_score, s._id as student_id, s.firstname as student_firstname, s.lastname as student_lastname, s.grade as student_grade, gi._id as assignment_id, gi.name as assignment_name, gi.possiblescore as assignment_possiblescore FROM Grades g FULL OUTER JOIN Students s ON g.student = s._id FULL OUTER JOIN Graded_Items gi ON g.item = gi._id'
+  };
+
+  db.conn.any(query)
+    .then(allGrades => res.status(200).send(allGrades))
+    .catch(err => res.status(404).send(err));
+};
+
 GradeController.getGradesByStudent = (req, res) => {
   const query = {
     text: 'SELECT g._id as grade_id, s.firstname as student_first_name, s.lastname as student_last_name, gi.name as assignment_name, g.actualscore as actual_score, gi.possiblescore as possible_score FROM Grades g INNER JOIN Students s ON g.student = s._id INNER JOIN Graded_Items gi ON g.item = gi._id WHERE student = $1',

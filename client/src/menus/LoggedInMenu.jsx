@@ -25,6 +25,10 @@ const LoggedInMenu = (props) => {
       containerElement={<Link to="/assignments" />}
       primaryText="Assignments"
     />
+    <MenuItem 
+      containerElement={<Link to="/grades-by-assignment" />}
+      primaryText="Grade Stats"
+    />
     </IconMenu>
   );
 };

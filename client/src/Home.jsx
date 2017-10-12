@@ -25,6 +25,13 @@ const Home = () => {
             label="Manage Assignments" 
             icon={<FontIcon className="fa fa-book" />}
           />
+          <FlatButton
+            className="Route-To-Grade-Vis"
+            href="/grades-by-assignment"
+            default={true}
+            label="View Grade Stats" 
+            icon={<FontIcon className="fa fa-bar-chart" />}
+          />
         </div>
       </header>
     </div>
